@@ -1,4 +1,6 @@
 *.py[cod]
+./run
+*.out
 
 # C extensions
 *.so
