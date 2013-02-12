@@ -91,8 +91,8 @@ def extractNoteURLS(url):
         if len(cells) >1:
             title = (cells[1].text)
             link = 'NA'
-            if 'href' in cells[1].encode('utf-8'):
-                link = (cells[1]('a')[0])['href']
+            if 'href' in row.encode('utf-8'):
+                link = (row('a')[0])['href']
             noteInfos.append((title,link))
     return noteInfos
 
