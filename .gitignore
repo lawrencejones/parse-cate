@@ -3,6 +3,8 @@
 *.out
 run*
 
+.DS_Store
+
 # C extensions
 *.so
 
