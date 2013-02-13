@@ -19,5 +19,5 @@ quotation marks and any tuples are therefore formatted like so:
   
   (A,B) will become literally ("A","B")
 
-The two tables (modules and exercises) are separated by three <br>
-markers. Each entry is delimited by a single <br>
+The two tables (modules and exercises) are separated by three br
+markers. Each entry is delimited by a single br
