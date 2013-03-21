@@ -1,11 +1,11 @@
-import urllib2, sys, datetime
+import urllib2, sys, datetime, getpass
 from bs4 import BeautifulSoup
 
 #------------------------------------------
-login = sys.argv[1]
-password = sys.argv[2]
-userClass = sys.argv[3]
-period = sys.argv[4]
+login = 'lmj112'
+password = getpass.getpass('Enter password... ')
+userClass = 'c1'
+period = '3'
 cateTopLvl = "https://cate.doc.ic.ac.uk/"
 #------------------------------------------
 months = ["JANUARY","FEBRUARY","MARCH","APRIL"
@@ -15,6 +15,7 @@ months = ["JANUARY","FEBRUARY","MARCH","APRIL"
 def generateProjLink(login, period, userClass):
     return (cateTopLvl+'timetable.cgi?keyt=20'+login[len(login)-2:] +
             ':'+period+':'+userClass+':'+login)
+    
 
 def processExerciseCell(cell,startDay,count,months,year,moduleId):
     exerciseId = (cell.find('b')).text.encode('utf-8')
