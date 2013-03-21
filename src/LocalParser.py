@@ -7,6 +7,8 @@ password = getpass.getpass('Enter password... ')
 userClass = 'c1'
 period = '3'
 cateTopLvl = "https://cate.doc.ic.ac.uk/"
+if len(sys.argv) == 2:
+    optionalSelection = sys.argv[1]
 #------------------------------------------
 months = ["JANUARY","FEBRUARY","MARCH","APRIL"
          ,"MAY","JUNE","JULY","AUGUST","SEPTEMBER"
@@ -79,7 +81,8 @@ def processExerciseCells(cells,moduleId):
                 count = count + int(exerciseCell['colspan'])
                 #print "increment by " + str(exerciseCell['colspan'])
         elif ('href' in str(exerciseCell)):
-            print processExerciseCell(exerciseCell,startDay,count,months,2012,moduleId)
+            if len(sys.argv) != 2:
+                print processExerciseCell(exerciseCell,startDay,count,months,2012,moduleId)
             count = count + int(exerciseCell['colspan'])
 
 def extractNoteURLS(url):
@@ -145,16 +148,33 @@ for i in range(len(rows)):
             if notesURL != 'NA':
                 noteURLs = extractNoteURLS(notesURL)
             rowCount = int(cell['rowspan']) -1
-            print "******************************************"
-            print moduleId + " - " + moduleName
-            print 'Module Notes link : ' + notesURL
+            urls = []
             if noteURLs != 'NA':
                 for (t,l) in noteURLs:
-                    print '  --'+t+ '  :  ' + l
-            print "******************************************"
-            modules.append((moduleId,moduleName))
+                    if l != '':
+                        urls.append(l)
+            if len(sys.argv) != 2:
+                print "******************************************"
+                print moduleId + " - " + moduleName
+                print 'Module Notes link : ' + notesURL
+                if noteURLs != 'NA':
+                    for (t,l) in noteURLs:
+                        print '  --'+t+ '  :  ' + l
+                print "******************************************"
+            modules.append({'id':moduleId,'name':moduleName,'notesURL':notesURL,'notes':urls})
             processExerciseCells((rows[i]('td'))[rows[i]('td').index(cell)+3:],moduleId)
             while rowCount != 0:
                 processExerciseCells((rows[i+rowCount]('td')[1:]),moduleId)
                 rowCount -= 1
+
+if len(sys.argv) == 2:
+    for module in modules:
+        if module['id'] == optionalSelection:
+            print "\n******************************************"
+            print module['id'] + " - " + module['name']
+            print 'Module Notes link : ' + module['notesURL']
+            if module['notesURL'] != 'NA':
+                for link in module['notes']:
+                    print(cateTopLvl+link)
+            print "******************************************"
 
