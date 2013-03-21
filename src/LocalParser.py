@@ -1,23 +1,36 @@
-import urllib2, sys, datetime, getpass
+import os, urllib2, sys, datetime, getpass
 from bs4 import BeautifulSoup
 
 #------------------------------------------
-login = 'lmj112'
+login = raw_input('Enter your CATE login... ')
 password = getpass.getpass('Enter password... ')
-userClass = 'c1'
-period = '3'
+userClass = raw_input('Enter your class code (ie, c1)... ')
+period = raw_input('Enter the term to download, where \n'+
+                   '  Autumn = 1 \n  Spring = 3 \n  Summer = 5... ')
 cateTopLvl = "https://cate.doc.ic.ac.uk/"
 if len(sys.argv) == 2:
     optionalSelection = sys.argv[1]
+if len(sys.argv) == 3:
+    moduleID = sys.argv[1]
+
 #------------------------------------------
 months = ["JANUARY","FEBRUARY","MARCH","APRIL"
          ,"MAY","JUNE","JULY","AUGUST","SEPTEMBER"
          ,"OCTOBER","NOVEMEBER","DECEMBER"]
 
+#Exercise dict = {id, moduleId, name, set, due, spec, givenLink, email, handinLink}
+#Module dict = {id, name, notesURL, notes}
+
 def generateProjLink(login, period, userClass):
     return (cateTopLvl+'timetable.cgi?keyt=20'+login[len(login)-2:] +
             ':'+period+':'+userClass+':'+login)
-    
+
+def exerciseToString(e):
+    return ("\n[ Exercise ID : " + e['id'] + ' {'+e['moduleId']+'}' + "\n  Exercise name : " + 
+            e['name'] + "\n  Set : " + e['set'].strftime('%d/%m/%y') + "  Due : " + e['due'].strftime("%d/%m/%y") +
+            "\n  Spec link : " + e['spec'] + "\n  Given link : " + e['givenLink'] + 
+            "\n  Email link : " + e['email'] + "\n  Hand in link : " + e['handinLink'] +  " ]\n")
+
 
 def processExerciseCell(cell,startDay,count,months,year,moduleId):
     exerciseId = (cell.find('b')).text.encode('utf-8')
@@ -37,10 +50,9 @@ def processExerciseCell(cell,startDay,count,months,year,moduleId):
             emailLink = a['href']
     setDate = startDay + datetime.timedelta(days=int(count))
     dueDate = setDate + datetime.timedelta(days=int(cell['colspan']) -1)
-    return ("\n[ Exercise ID : " + exerciseId + ' {'+moduleId+'}' + "\n  Exercise name : " + 
-            exerciseName + "\n  Set : " + setDate.strftime('%d/%m/%y') + "  Due : " + dueDate.strftime("%d/%m/%y") +
-            "\n  Spec link : " + specLink + "\n  Given link : " + givenLink + 
-            "\n  Email link : " + emailLink + "\n  Hand in link : " + handinLink +  " ]\n")
+    return ({'id':exerciseId,'moduleId':moduleId,'name':exerciseName,
+             'set':setDate,'due':dueDate,'spec':specLink,'givenLink':givenLink,
+             'email':emailLink,'handinLink':handinLink})
 
 def getFirstDay(row):
     day = 0
@@ -69,7 +81,7 @@ def stripOutHeaders(rows,monthNamesRow):
                 newTable.append(row)
     return newTable
 
-def processExerciseCells(cells,moduleId):
+def processExerciseCells(cells,moduleId,exercises):
     count = -2
     for exerciseCell in cells:
     #print exerciseCell
@@ -81,8 +93,10 @@ def processExerciseCells(cells,moduleId):
                 count = count + int(exerciseCell['colspan'])
                 #print "increment by " + str(exerciseCell['colspan'])
         elif ('href' in str(exerciseCell)):
-            if len(sys.argv) != 2:
-                print processExerciseCell(exerciseCell,startDay,count,months,2012,moduleId)
+            e = processExerciseCell(exerciseCell,startDay,count,months,2012,moduleId)
+            exercises.append(e)
+            if len(sys.argv) == 1:
+                print exerciseToString(e)
             count = count + int(exerciseCell['colspan'])
 
 def extractNoteURLS(url):
@@ -99,6 +113,74 @@ def extractNoteURLS(url):
                 link = (row('a')[0])['href']
             noteInfos.append((title,link))
     return noteInfos
+
+def extractModelURL(url):
+    if url != "NA":
+        s = opener.open(cateTopLvl + str(url))
+        givenSoup = BeautifulSoup(s.read())
+        for a in givenSoup('a'):
+            if 'MODEL' in a.encode('utf-8'):
+                return a['href'].encode('utf-8')
+    return False
+
+def printModuleLinks(modules):
+    for module in modules:
+        if module['id'] == optionalSelection:
+            print "\n******************************************"
+            print module['id'] + " - " + module['name']
+            print 'Module Notes link : ' + module['notesURL']
+            if module['notesURL'] != 'NA':
+                for link in module['notes']:
+                    print(cateTopLvl+link)
+            print "******************************************"
+
+def getSubIndexForExercise(e):
+    return int(e['id'].split(':')[0])
+
+def downloadModuleNotes(m,notesDir):
+    if m['notes'] != 'NA':
+        for note in m['notes']:
+            wget = 'wget -A pdf --http-user="'+login+'" --http-password="'+password+'" --content-disposition '
+            os.system(wget+'-P '+notesDir+' '+cateTopLvl+note)
+
+def createFoldersForExercises(moduleId,exercises,pathExtension):
+    wget = 'wget -A pdf --http-user="'+login+'" --http-password="'+password+'" --content-disposition '
+    moduleExs = []
+    for e in exercises:
+        if e['moduleId'] == moduleId:
+            moduleExs.append(e)
+    moduleExs = sorted(moduleExs, key=getSubIndexForExercise)
+    cmds = []
+    for i in range(0,len(moduleExs)-1):
+        e = moduleExs[i]
+        prefix = str(i+1)
+        if len(prefix) == 1:
+            prefix = '0'+prefix
+        folderName = pathExtension + prefix + '-' + (e['name'][:].replace(' ','')).replace('-','')
+        cmds.append('mkdir ' + folderName +';')
+        if e['spec'] != 'NA':
+            cmds.append(wget+'-P '+folderName+'/ '+cateTopLvl+e['spec']+';')
+        modelLink = extractModelURL(e['givenLink'])
+        if modelLink != False:
+            cmds.append(wget+'-P '+folderName+'/ '+cateTopLvl+modelLink)
+    for cmd in cmds:
+        os.system(cmd)
+
+def createAllFileDirectorys(modules,exercises):
+    for m in modules:
+        moduleFolderName = (m['name'][:]).replace(' ','_');
+        os.system('mkdir '+moduleFolderName)
+        os.system('mkdir '+moduleFolderName+'/00-Notes')
+        if m['notesURL'] != 'NA':
+            downloadModuleNotes(m,moduleFolderName + '/00-Notes')
+        createFoldersForExercises(m['id'],exercises,moduleFolderName+'/')
+    os.system('for big_folder in `ls`; do ' +
+                 'for folder in `ls $big_folder | grep -iv "00"`; do ' +
+                 'echo "$folder" >> $big_folder/TickList; ' +
+                 'echo "--Nothing as of yet" >> $big_folder/TickList; ' + 
+                 'echo >> $big_folder/TickList; ' +
+                 'done; ' +
+                 'done')
 
 
 passmgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -153,7 +235,7 @@ for i in range(len(rows)):
                 for (t,l) in noteURLs:
                     if l != '':
                         urls.append(l)
-            if len(sys.argv) != 2:
+            if len(sys.argv) == 1:
                 print "******************************************"
                 print moduleId + " - " + moduleName
                 print 'Module Notes link : ' + notesURL
@@ -162,19 +244,17 @@ for i in range(len(rows)):
                         print '  --'+t+ '  :  ' + l
                 print "******************************************"
             modules.append({'id':moduleId,'name':moduleName,'notesURL':notesURL,'notes':urls})
-            processExerciseCells((rows[i]('td'))[rows[i]('td').index(cell)+3:],moduleId)
+            processExerciseCells((rows[i]('td'))[rows[i]('td').index(cell)+3:],moduleId,exercises)
             while rowCount != 0:
-                processExerciseCells((rows[i+rowCount]('td')[1:]),moduleId)
+                processExerciseCells((rows[i+rowCount]('td')[1:]),moduleId,exercises)
                 rowCount -= 1
 
 if len(sys.argv) == 2:
-    for module in modules:
-        if module['id'] == optionalSelection:
-            print "\n******************************************"
-            print module['id'] + " - " + module['name']
-            print 'Module Notes link : ' + module['notesURL']
-            if module['notesURL'] != 'NA':
-                for link in module['notes']:
-                    print(cateTopLvl+link)
-            print "******************************************"
+    if sys.argv[1] == 'kickass':
+        createAllFileDirectorys(modules,exercises)
+    else:
+        printModuleLinks(modules)
 
+if len(sys.argv) == 3:
+    if sys.argv[2] == 'kickass':
+        createFoldersForExercises(sys.argv[1],exercises,'')
