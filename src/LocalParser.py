@@ -42,7 +42,7 @@ cateTopLvl = "https://cate.doc.ic.ac.uk/"
 #------------------------------------------
 months = ["JANUARY","FEBRUARY","MARCH","APRIL"
          ,"MAY","JUNE","JULY","AUGUST","SEPTEMBER"
-         ,"OCTOBER","NOVEMEBER","DECEMBER"]
+         ,"OCTOBER","NOVEMBER","DECEMBER"]
 
 #Exercise dict = {id, moduleId, name, set, due, spec, givenLink, email, handinLink}
 #Module dict = {id, name, notesURL, notes}
