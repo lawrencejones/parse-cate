@@ -234,7 +234,7 @@ monthNamesRow = rows[0]
 monthNames = extractMonthNames(monthNamesRow)
 daysRow = rows[2]
 #construct a row of days
-startDay = datetime.date(2012,months.index(monthNames[0]) +1,getFirstDay(daysRow))
+startDay = datetime.date(2013,months.index(monthNames[0]) +1,getFirstDay(daysRow))
 headerRows = rows[0:7]
 #construct a list of header rows
 rows = stripOutHeaders(rows,monthNamesRow)
