@@ -7,8 +7,10 @@ for scraping CATe info.
 
 ## Just Collecting Info
 To just pick up the information about exercises, modules, what-not and
-just run with it, feel free to call the command  return
-    `python LocalParser.py`  return
+just run with it, feel free to call the command
+
+    `python LocalParser.py`
+
 from the `src` folder. This will then ask for your login details, term
 time etc. Using these credentials it will proceed to login to CATe,
 process the content and spit it out in the terminal.
@@ -17,17 +19,23 @@ process the content and spit it out in the terminal.
 Yeah, that can be a pain. Luckily this should do it all for you! To
 download all the notes, exercise spec sheets / model answers from CATe
 for the specific term, then run the command
+
     `python LocalParser.py kickass`
+
 from the `src` folder, once again supplying it with the chosen details.
 I'd like to take this moment to point out the helpful TickList files
 that are produced all over the place. I'm not spamming you, promise, the
 idea is that as you do the exercises (dubious I know), then you'll be
 able to drop a note to say what you got stuck on, when you got stuck on
-it.  return
+it.
+
+### TickList files
 Being an self-confessed obsessive compulsive monster, I really enjoy
 seeing things slowly get ticked off all over the place. 
-If it's really not your thing, then just run  return
-    `rm **/TickList`  return
+If it's really not your thing, then just run
+
+    `rm **/TickList`
+
 from the root of the downloaded files. You have my apology.
 
 ### On the subject of TickLists...
@@ -46,8 +54,10 @@ information in the future.
 ### Downloading Specific Modules ONLY
 To limit the download to only one module, simply pass the script the
 module id followed by the keyword kickass. Starting to regret the choice
-of that flag now.  return
-    `python LocalParser.py 141 kickass`  return
+of that flag now.
+
+    `python LocalParser.py 141 kickass`
+
 ...run once again from the `src` folder. That would for example download
 the Reasoning About Program stuff.
 
@@ -59,13 +69,15 @@ having written this script in both Java and Python now I've currently
 lost enthusiasm to push for the server implementation.
 As of now the Parser.py is the file of interest and will actually render
 something useable (CSV file of all the modules and exercises) using a
-local python server.  return
+local python server.
+
 If anyone has any need for something like this then I'm happy to kick it
 back into gear, just not really seeing the requirment anymore. Drop me a
 message if you have any interest though.
 
 ## The Help Flag
-Useless. Please don't read that drivel.  return
+Useless. Please don't read that drivel.
+
 Really, please.
 
 ## TODOs
