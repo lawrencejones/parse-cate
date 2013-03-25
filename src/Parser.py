@@ -14,7 +14,7 @@ def parsePage(login,password,userClass,period):
     #------------------------------------------
     months = ["JANUARY","FEBRUARY","MARCH","APRIL"
              ,"MAY","JUNE","JULY","AUGUST","SEPTEMBER"
-             ,"OCTOBER","NOVEMEBER","DECEMBER"]
+             ,"OCTOBER","NOVEMBER","DECEMBER"]
     
     def generateProjLink(login, period, userClass):
         return (cateTopLvl+'timetable.cgi?keyt=20'+login[len(login)-2:] +

@@ -42,7 +42,7 @@ cateTopLvl = "https://cate.doc.ic.ac.uk/"
 #------------------------------------------
 months = ["JANUARY","FEBRUARY","MARCH","APRIL"
          ,"MAY","JUNE","JULY","AUGUST","SEPTEMBER"
-         ,"OCTOBER","NOVEMEBER","DECEMBER"]
+         ,"OCTOBER","NOVEMBER","DECEMBER"]
 
 #Exercise dict = {id, moduleId, name, set, due, spec, givenLink, email, handinLink}
 #Module dict = {id, name, notesURL, notes}
@@ -167,11 +167,11 @@ def getSubIndexForExercise(e):
 def downloadModuleNotes(m,notesDir):
     if m['notes'] != 'NA':
         for note in m['notes']:
-            wget = 'wget -A pdf --http-user="'+login+'" --http-password="'+password+'" --content-disposition '
+            wget = 'wget -A pdf --http-user="'+login+'" --http-password="'+password+'" --content-disposition --no-check-certificate '
             os.system(wget+'-P '+notesDir+' '+cateTopLvl+note)
 
 def createFoldersForExercises(moduleId,exercises,pathExtension):
-    wget = 'wget -A pdf --http-user="'+login+'" --http-password="'+password+'" --content-disposition '
+    wget = 'wget -A pdf --http-user="'+login+'" --http-password="'+password+'" --content-disposition --no-check-certificate '
     moduleExs = []
     for e in exercises:
         if e['moduleId'] == moduleId:
