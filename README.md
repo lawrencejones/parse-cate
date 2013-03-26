@@ -4,6 +4,8 @@ CATEScraper
 Originally designed with the purpose of supplying other apps with CATe
 content, this package contains both a local and a server based solution
 for scraping CATe info.
+To install, run ` python setup.py install ` from the local_src folder.
+This will install the relevant bs4 package that the parser requires.
 
 ## Just Collecting Info
 To just pick up the information about exercises, modules, what-not and
