@@ -1,27 +1,16 @@
+#!/usr/bin/env python
 import os, urllib2, sys, datetime, getpass
 from bs4 import BeautifulSoup
 
 def displayHelp():  #-----HELP INFORMATION------------------------------------
     print('\n----------------------------------------------------------------\n'
-         +'CATE Scraper, a python script that can peel CATE like an orange!\n'
+         +'CATE Scraper, download notes from Imperial DoC\n'
          +'----------------------------------------------------------------\n\n')
     print('To print out all the exercises in the selected term, just call\n'
          +'the script with no arguments.\n\n'
-         +'To have the script produce information on a single module, call\n'
-         +'it with the argument of the module id, ie 141 for Reasoning.\n\n'
          +'To download all the CATE files locally from the current term,\n'
          +'call the script like so...\n\n'
-         +'      python LocalParser.py kickass\n\n'
-         +'...which will proceed to take login details, then download the\n'
-         +'exercises from the currently selected term (spec sheet and model\n'
-         +'answers if available).\n\n'
-         +'  NB- kickass specific, to download just one of the modules, call\n'
-         +'      the script like so...\n\n'
-         +'          python LocalParser.py 141 kickass\n\n'
-         +'      ...which would download only a single module into the current\n'
-         +'      path. Note that rm **/TickList is recommended before laying\n'
-         +'      downloads (ie, downloading 1st term, then 2nd for all content)\n'
-         +'      in order to avoid duplicating folder titles.\n\n')
+         +'      python LocalParser.py download\n\n')
     exit()
 
 #------------------------------------------
@@ -277,11 +266,11 @@ for i in range(len(rows)):
                 rowCount -= 1
 
 if len(sys.argv) == 2:
-    if sys.argv[1] == 'kickass':
+    if sys.argv[1] == 'download':
         createAllFileDirectorys(modules,exercises)
     else:
         printModuleLinks(modules)
 
 if len(sys.argv) == 3:
-    if sys.argv[2] == 'kickass':
+    if sys.argv[2] == 'download':
         createFoldersForExercises(sys.argv[1],exercises,'')

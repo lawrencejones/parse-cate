@@ -62,38 +62,3 @@ of that flag now.
 
 ...run once again from the `src` folder. That would for example download
 the Reasoning About Program stuff.
-
-## Server Functionality
-Well, this bit sort of trailed off. It would be lovely to have something
-that would serve as a tool to provide people with nicely formatted CATe
-content. Plan is to get this working down the line at some point, but
-having written this script in both Java and Python now I've currently
-lost enthusiasm to push for the server implementation.
-As of now the Parser.py is the file of interest and will actually render
-something useable (CSV file of all the modules and exercises) using a
-local python server.
-
-If anyone has any need for something like this then I'm happy to kick it
-back into gear, just not really seeing the requirment anymore. Drop me a
-message if you have any interest though.
-
-## The Help Flag
-Useless. Please don't read that drivel.
-
-Really, please.
-
-## TODOs
-Once again, definitely open to anyone. Would be quite nice to work on
-something that fully stripped CATe of all it's data, even if just to
-hash out a general method for each page that other people could follow.
-- Have the script run the removal of TickList files before creating any
-other. Too simple. Lazy.
-- Fix slight bug where third row exercises seem to be off by one day?
-Perculiar and only noticed it earlier, maybe down to the control flow of
-the while loop?
-- Fix the wget issue where it attempts to connect without using the
-given credentials (erm, wget... why?)
-- Censor out the bash history to remove the plaintext password from the
-wget commands
-- Work on the server side
-- Incorporate a grade scraper script into the main file
