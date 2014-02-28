@@ -22,7 +22,7 @@ Yeah, that can be a pain. Luckily this should do it all for you! To
 download all the notes, exercise spec sheets / model answers from CATe
 for the specific term, then run the command
 
-    `python LocalParser.py kickass`
+    `python LocalParser.py download`
 
 from the `src` folder, once again supplying it with the chosen details.
 I'd like to take this moment to point out the helpful TickList files
@@ -55,10 +55,10 @@ information in the future.
 
 ### Downloading Specific Modules ONLY
 To limit the download to only one module, simply pass the script the
-module id followed by the keyword kickass. Starting to regret the choice
+module id followed by the keyword download. Starting to regret the choice
 of that flag now.
 
-    `python LocalParser.py 141 kickass`
+    `python LocalParser.py 141 download`
 
 ...run once again from the `src` folder. That would for example download
 the Reasoning About Program stuff.
