@@ -198,6 +198,14 @@ def createAllFileDirectorys(modules,exercises):
                  'done; ' +
                  'done')
 
+def getMonth(monthList):
+    if monthList[0] in months:
+        # returns the month if it is the full name of the month
+        return months.index(monthList[0]) + 1
+    else:
+        # gets value for next months name and takes one from it
+        return getMonth(monthList[1:]) - 1
+        # method will fail if no month on page is the full month name.
 
 passmgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 #establish password manager
@@ -223,7 +231,7 @@ monthNamesRow = rows[0]
 monthNames = extractMonthNames(monthNamesRow)
 daysRow = rows[2]
 #construct a row of days
-startDay = datetime.date(2013,months.index(monthNames[0]) +1,getFirstDay(daysRow))
+startDay = datetime.date(2013,getMonth(monthNames),getFirstDay(daysRow))
 headerRows = rows[0:7]
 #construct a list of header rows
 rows = stripOutHeaders(rows,monthNamesRow)
