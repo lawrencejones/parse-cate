@@ -2,7 +2,7 @@
 import os, urllib2, sys, datetime, getpass
 from bs4 import BeautifulSoup
 
-def displayHelp():  #-----HELP INFORMATION------------------------------------
+def displayHelp():
     print('\n----------------------------------------------------------------\n'
          +'CATE Scraper, download notes from Imperial DoC\n'
          +'----------------------------------------------------------------\n\n')
@@ -28,13 +28,10 @@ period = raw_input('Enter the term to download, where \n'+
                    '  Autumn = 1 \n  Spring = 3 \n  Summer = 5... ')
 
 cateTopLvl = "https://cate.doc.ic.ac.uk/"
-#------------------------------------------
+
 months = ["JANUARY","FEBRUARY","MARCH","APRIL"
          ,"MAY","JUNE","JULY","AUGUST","SEPTEMBER"
          ,"OCTOBER","NOVEMBER","DECEMBER"]
-
-#Exercise dict = {id, moduleId, name, set, due, spec, givenLink, email, handinLink}
-#Module dict = {id, name, notesURL, notes}
 
 
 def generateProjLink(login, period, userClass):
@@ -82,7 +79,7 @@ def extractMonthNames(row):
     for cell in rows[0]('th'):
         if ('white' in str(cell)) and int(cell['colspan']) > 2:
             monthNames.append(cell.text.upper().strip())
-    return monthNames 
+    return monthNames
 
 def stripOutHeaders(rows,monthNamesRow):
     newTable = []
@@ -198,6 +195,14 @@ def createAllFileDirectorys(modules,exercises):
                  'done; ' +
                  'done')
 
+def getMonth(monthList):
+    if monthList[0] in months:
+        # returns the month if it is the full name of the month
+        return months.index(monthList[0]) + 1
+    else:
+        # gets value for next months name and takes one from it
+        return getMonth(monthList[1:]) - 1
+        # method will fail if no month on page is the full month name.
 
 passmgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 passmgr.add_password(None, cateTopLvl, login, password)
@@ -216,8 +221,7 @@ rows = soup.findAll('table', {'border':0})[0].findAll('tr')
 monthNamesRow = rows[0]
 monthNames = extractMonthNames(monthNamesRow)
 daysRow = rows[2]
-
-startDay = datetime.date(2013,months.index(monthNames[0]) +1,getFirstDay(daysRow))
+startDay = datetime.date(2013,getMonth(monthNames),getFirstDay(daysRow))
 headerRows = rows[0:7]
 rows = stripOutHeaders(rows,monthNamesRow)
 
