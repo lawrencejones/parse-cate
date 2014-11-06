@@ -200,43 +200,37 @@ def createAllFileDirectorys(modules,exercises):
 
 
 passmgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
-#establish password manager
 passmgr.add_password(None, cateTopLvl, login, password)
-#add user/pass combo to the mgr
 authhandler = urllib2.HTTPBasicAuthHandler(passmgr)
-#establist a authentication handler to sign in
+
 opener = urllib2.build_opener(authhandler)
-#delegate an opener to open the url with the authhandler
 cateWelcome = "https://cate.doc.ic.ac.uk/personal.cgi?keyp=20"+login[-2:]+":"+login
-#print cateWelcome   #testing
+
 s = opener.open(generateProjLink(login,period,userClass))
-#dwld html src
 html = s.read()
 s.close()
-#finish all html dwlds
+
 soup = BeautifulSoup(html)
-#use beautifulsoup to parse html text
-rows = soup.findAll('table', {'border':0})[0].findAll('tr')   
-#picks up the project table - read, project table only one with border 0
+rows = soup.findAll('table', {'border':0})[0].findAll('tr')
+
 monthNamesRow = rows[0]
-#construct a row of month names #weeksRow = rows[1] #construct a row of week names
 monthNames = extractMonthNames(monthNamesRow)
 daysRow = rows[2]
-#construct a row of days
+
 startDay = datetime.date(2013,months.index(monthNames[0]) +1,getFirstDay(daysRow))
 headerRows = rows[0:7]
-#construct a list of header rows
 rows = stripOutHeaders(rows,monthNamesRow)
-#strip headers from the entire table
+
 modules = []
 exercises = []
+
 for i in range(len(rows)):
-    for cell in rows[i]('td'):   #for each cell in each row
-        #print cell.text.encode('utf-8')
+
+    for cell in rows[i]('td'):
         exIds = cell.findAll('b')
-        moduleIds = cell.findAll(attrs={'color':'blue'})  #if the cell has a blue marker
+        moduleIds = cell.findAll(attrs={'color':'blue'})
         if len(moduleIds) != 0:
-            moduleId = moduleIds[0].text   #then this is the module id
+            moduleId = moduleIds[0].text
             moduleName =  (cell.text).encode('utf-8','ignore').strip()[len(moduleId) + 3:]
             noteURLs = 'NA'
             notesURL = 'NA'
